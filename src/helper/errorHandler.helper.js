@@ -16,13 +16,13 @@ exports.errorHandler = (error, res) => {
     if (error.message.includes("code_expired")) {
       return res.status(400).json({
         succes: false,
-        message: "Kode Expire!",
+        message: "Code expired!",
       });
     }
     if (error.message.includes("notfound_code_request")) {
       return res.status(400).json({
         succes: false,
-        message: "Permintaan tidak ditemukan",
+        message: "Request not founded",
       });
     }
   }

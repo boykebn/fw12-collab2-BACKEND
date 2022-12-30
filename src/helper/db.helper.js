@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const { Pool } = require("pg");
 
 require("dotenv").config();
@@ -16,3 +17,13 @@ dbHelper.connect((err) =>{
 })
 
 module.exports = dbHelper;
+=======
+const { Pool } = require('pg')
+
+const db = new Pool({
+    connectionString: 
+    process.env.DATABASE_URL 
+})
+
+mocule.exports = db
+>>>>>>> 84078145ac80e92c5df875c9c09290bfa831d247

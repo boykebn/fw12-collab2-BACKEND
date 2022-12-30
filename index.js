@@ -12,12 +12,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
+app.use('/assets/uploads', express.static("uploads/"))
+
+
 // app.use("/", require("./src/routes"));
 
 app.get("/", (req, res) => {
-  res.json({
+  res.status(200).json({
     success: true,
-    message: "berhasil",
+    message: "Backend is running well",
   });
 });
 

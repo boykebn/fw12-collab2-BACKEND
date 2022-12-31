@@ -4,7 +4,7 @@ const db = require('../helper/db.helper');
 
 
 
-exports.createUser = async (data, cb) => {
+exports.createUser = async (data) => {
     try {
 
         const sql = 'INSERT INTO users("firstName", "lastName", "birthDate", "gender", "address", "phoneNumber", "email", "password", "picture", "displayName", "role") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
@@ -23,7 +23,7 @@ exports.createUser = async (data, cb) => {
             data.role
         ];
     
-        const newUsers = await db.query(sql, values, cb);
+        const newUsers = await db.query(sql, values);
         return newUsers.rows[0];
     } catch (error) {
         if (error) throw (error);

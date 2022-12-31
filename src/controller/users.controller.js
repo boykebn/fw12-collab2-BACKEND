@@ -15,8 +15,8 @@ exports.createUsers = async (req, res) => {
         const user = await createUsers(req.body);
         res.status(200).json({
             success: true,
-            message: 'User created',
-            results: user
+            message: 'User created successfully',
+            results: user,
         })
     } catch (error) {
         if (error) return errorHandler(error, res);
@@ -26,11 +26,11 @@ exports.createUsers = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
     try {
-        const allUsers = await getUsers();
+        const Users = await getUsers();
         res.status(200).json({
             success: true,
             message: 'All users retrieved successfully',
-            results: allUsers
+            results: Users
         })
     } catch (error) {
         if (error) return errorHandler(error, res);

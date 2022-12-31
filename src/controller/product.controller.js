@@ -33,7 +33,7 @@ exports.createProduct = async (req, res) => {
       res.status(200).json({
         success: true,
         message: "Product created successfully",
-        results: Product,
+        results: product,
       });
     } catch (error) {
       if (error) return errorHandler(error, res);

@@ -1,83 +1,77 @@
 const {
-    createUser,
-    getUsers,
-    getUserByid,
-    updateUser,
-    deleteUser,
-} = require('../models/users.model');
-
-const errorHandler = require('../helper/errorHandler.helper');
-
-
-
-exports.createUser = async (req, res) => {
+    getAllUsers,
+    createUsers,
+    getUsersById,
+    updateUsers,
+    deleteUsers,
+  } = require("../models/users.model");
+  const errorHandler = require("../helper/errorHandler.helper");
+  
+  exports.getAllUsers = async (req, res) => {
     try {
-        const user = await createUser(req.body);
-        res.status(200).json({
-            success: true,
-            message: 'User created successfully',
-            results: user,
-        })
+      const allUsers = await getAllUsers();
+      res.status(200).json({
+        success: true,
+        message: "All Users retrieved successfully",
+        results: allUsers,
+      });
     } catch (error) {
-        if (error) return errorHandler(error, res);
+      if (error) return errorHandler(error, res);
     }
-};
-
-
-exports.getUsers = async (req, res) => {
+  };
+  
+  exports.createUsers = async (req, res) => {
     try {
-        const Users = await getUsers();
-        res.status(200).json({
-            success: true,
-            message: 'All users retrieved successfully',
-            results: Users
-        })
+      const Users = await createUsers(req.body);
+      res.status(200).json({
+        success: true,
+        message: "Users created successfully",
+        results: Users,
+      });
     } catch (error) {
-        if (error) return errorHandler(error, res);
+      if (error) return errorHandler(error, res);
     }
-};
-
-
-exports.getUserById = async (req, res) => {
+  };
+  
+  exports.getUsersById = async (req, res) => {
     try {
-        const user = await getUserByid(req.params.id);
-        res.status(200).json({
-            success: true,
-            message: 'user retrieved successfully',
-            results: user
-        })
+      const Users = await getUsersById(req.params.id);
+      res.status(200).json({
+        success: true,
+        message: "Users retrieved successfully",
+        results: Users,
+      });
     } catch (error) {
-        if(error)return errorHandler(error, res)
+      if (error) return errorHandler(error, res);
     }
-}
-
-
-exports.updateUser = async (req, res) => {
+  };
+  
+  exports.updateUsers = async (req, res) => {
     try {
-        const user = await updateUser(
-            req.params.id,
-            req.body
-        );
-        res.status(200).json({
-            success: true,
-            message: 'User updated',
-            results: user
-        })
+      const Users = await updateUsers(
+        req.params.id,
+        req.body
+      );
+      res.status(200).json({
+        success: true,
+        message: "Users updated successfully",
+        results: Users,
+      });
     } catch (error) {
-        if (error) return errorHandler(error, res)
+      if (error) return errorHandler(error, res);
     }
-};
-
-
-exports.deleteUser = async (req, res) => {
+  };
+  
+  exports.deleteUsers = async (req, res) => {
     try {
-        const user = await deleteUser(req.params.id);
-        res.status(200).json({
-            success: true,
-            message: 'User deleted',
-            results: user
-        })
+      const Users = await deleteUsers(req.params.id);
+      res.status(200).json({
+        success: true,
+        message: "Users deleted successfully",
+        results: Users,
+      });
     } catch (error) {
-        if (error) return errorHandler(error, res)
+      if (error) return errorHandler(error, res);
     }
-};
+  };
+  

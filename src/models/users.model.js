@@ -1,6 +1,6 @@
 const db = require("../helper/db.helper");
 
-exports.createUser = async (data, cb) => {
+exports.createUsers = async (data, cb) => {
   try {
     const sql =
       'INSERT INTO users("firstName", "lastName", "birthDate", "gender", "address", "phoneNumber", "email", "password", "picture", "displayName", "role") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
@@ -26,7 +26,7 @@ exports.createUser = async (data, cb) => {
   }
 };
 
-exports.getUsers = async () => {
+exports.getAllUsers = async () => {
   try {
     const sql = 'SELECT * FROM "users"';
     const newUsers = await db.query(sql);
@@ -36,7 +36,7 @@ exports.getUsers = async () => {
   }
 };
 
-exports.getUserById = async (id) => {
+exports.getUsersById = async (id) => {
   try {
     const sql = 'SELECT * FROM "users" WHERE id = $1';
     const newUsers = await db.query(sql, [id]);
@@ -46,7 +46,7 @@ exports.getUserById = async (id) => {
   }
 };
 
-exports.updateUser = async (data, id) => {
+exports.updateUsers = async (data, id) => {
   try {
     const sql = `UPDATE "users" SET "firstName" = COALESCE(NULLIF($1, ''), "firstName"),
         "lastName"=COALESCE(NULLIF($2, ''), "lastName"), "birthDate" = (NULLIF($3, ''), "birthDate"), "gender=(NULLIF($4, ''), "gender"), "address" =(NULIFF($5, ''), "address"), "phoneNumber"=(NULLIF($6, '')::INTEGER, "phoneNumber"), "email"=(NULLIF($7, ''), "email"), "password"=(NULLIF($8, ''), "password"), "picture"=(NULLIF($9, ''), "picture"), "displayName"=(NULLIF($10, ''), "displayNamme"),"role"=(NULLIF($11, '')::INTEGER, "role") WHERE id = $12 RETURNING *`;
@@ -72,7 +72,7 @@ exports.updateUser = async (data, id) => {
   }
 };
 
-exports.deleteUser = async (id) => {
+exports.deleteUsers = async (id) => {
   try {
     const sql = 'DELETE FROM "users" WHERE id = $1 RETURNING *';
     const newUser = await db.query(sql, [id]);

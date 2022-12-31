@@ -5,7 +5,7 @@ const {
   getSizeById,
   updateSize,
   deleteSize,
-} = require("../controllers/size.controllers");
+} = require("../controller/size.controller");
 
 size.get("/", getAllSize);
 size.get("/:id", getSizeById);
@@ -13,4 +13,4 @@ size.post("/", createSize);
 size.patch("/:id", updateSize);
 size.delete("/:id", deleteSize);
 
-module.exports = skill;
+module.exports = size;

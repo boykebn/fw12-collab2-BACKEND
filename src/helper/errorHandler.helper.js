@@ -1,4 +1,4 @@
-exports.errorHandler = (error, res) => {
+const errorHandler = (error, res) => {
   console.log(error);
   if (error.message.includes(' unique constraint "users_email_unique"')) {
     return res.status(400).json({
@@ -31,3 +31,5 @@ exports.errorHandler = (error, res) => {
     message: "Something happend in our backend",
   });
 };
+
+module.exports = errorHandler

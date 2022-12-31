@@ -5,7 +5,7 @@ const {
     updateSize,
     deleteSize,
   } = require("../models/size.model");
-  const errorHandler = require("../helpers/errorHandler.helper");
+  const errorHandler = require("../helper/errorHandler.helper");
   
   exports.getAllSize = async (req, res) => {
     try {

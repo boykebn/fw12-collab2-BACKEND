@@ -1,5 +1,5 @@
 const {
-    createUsers,
+    createUser,
     getUsers,
     getUserByid,
     updateUser,
@@ -10,9 +10,9 @@ const errorHandler = require('../helper/errorHandler.helper');
 
 
 
-exports.createUsers = async (req, res) => {
+exports.createUser = async (req, res) => {
     try {
-        const user = await createUsers(req.body);
+        const user = await createUser(req.body);
         res.status(200).json({
             success: true,
             message: 'User created successfully',

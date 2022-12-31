@@ -1,4 +1,4 @@
-const db = require("../helpers/db.helper");
+const db = require("../helper/db.helper");
 
 exports.getAllSize = async () => {
   try {

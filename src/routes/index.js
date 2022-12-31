@@ -7,5 +7,6 @@ routers.use("/productCategory", require("./productCategory.router"));
 routers.use("/deliveryTime", require("./deliveryTime.router"));
 routers.use("/status", require("./status.router"));
 routers.use("/users", require("./users.router"));
+routers.use("/productSize", require("./productSize.router"));
 
 module.exports = routers

@@ -10,4 +10,8 @@ routers.use("/users", require("./users.router"));
 routers.use("/productSize", require("./productSize.router"));
 routers.use("/paymentMethod", require("./paymentMethod.router"));
 
+
+routers.use('/auth', require('./auth.router') )
+
+
 module.exports = routers

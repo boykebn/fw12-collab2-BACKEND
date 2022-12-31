@@ -81,3 +81,13 @@ exports.deleteUsers = async (id) => {
     if (error) throw error;
   }
 };
+
+exports.selectUserByEmail = async (email, cb) => {
+  try {
+    const sql = `SELECT * FROM users WHERE email=$1`;
+    const emailUser = await db.query(sql, [email]);
+    return emailUser.rows[0];
+  } catch (error) {
+    if (error) throw error;
+  }
+};

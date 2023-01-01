@@ -1,32 +1,147 @@
-const {selectUserByEmail} = require("../models/users.model");
+const errorHandler = require("../helper/errorHandler.helper");
+const {
+  selectUserByEmail,
+  updateUser,
+  createUsers,
+  createUser,
+} = require("../models/users.model");
+// const {
+//   createForgotPassword,
+//   selectUserByEmailAndCode,
+//   deleteForgotPassword,
+// } = require("../models/forgotPasswords.model");
+const argon = require("argon2");
+const jwt = require("jsonwebtoken");
 
-const login = (req, res) => {
-  selectUserByEmail(req.body.email, (err, { rows }) => {
-    if (rows.length) {
-      const [user] = rows;
-      if (req.body.password === user.password) {
-        const token = jwt.sign(
-          { id: user.id},
-          "backend-secret"
-        );
+const login = async (req, res) => {
+  try {
+    const user = await selectUserByEmail(req.body.email);
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.SECRET_KEY
+    );
+    if (user.role == 1) {
+      if (await argon.verify(user.password, req.body.password)) {
         return res.status(200).json({
           success: true,
-          message: "login success",
-          result: { token },
+          message: "Success Login User",
+          results: {
+            token,
+          },
         });
       } else {
-        return res.status(401).json({
+        return res.status(400).json({
           success: false,
-          message: "Wrong password or email",
+          message: "Wrong Email or Password",
+        });
+      }
+    } else if (user.role == 2) {
+      if (await argon.verify(user.password, req.body.password)) {
+        return res.status(200).json({
+          success: true,
+          message: "Success Login Admin",
+          results: {
+            token,
+          },
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Wrong Email or Password",
         });
       }
     } else {
-      return res.status(401).json({
+      return res.status(400).json({
         success: false,
-        message: "Email not registered",
+        message: "This email is not registered",
       });
     }
-  });
+  } catch (err) {
+    if (err) errorHandler(err, res);
+  }
 };
 
-module.exports =  login ;
+const register = async (req, res) => {
+  try {
+    req.body.password = await argon.hash(req.body.password);
+    const user = await createUsers(req.body);
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.SECRET_KEY
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Register Success",
+      results: {
+        token,
+      },
+    });
+  } catch (error) {
+    if (error) errorHandler(error, res);
+  }
+};
+
+// const forgotPassword = async (req, res) => {
+//   try {
+//     const { email } = req.body;
+//     const users = await selectUserByEmail(email);
+//     if (users) {
+//       const data = {
+//         email,
+//         userId: users.id,
+//         code: Math.ceil(Math.random() * 90000 + 10000),
+//       };
+//       await createForgotPassword(data);
+//       res.status(200).json({
+//         success: true,
+//         message: "Reset password has been requested.",
+//       });
+//     } else {
+//       return res.status(400).json({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
+//   } catch (error) {
+//     if (error) errorHandler(error, res);
+//   }
+// };
+
+// const resetPassword = async (req, res) => {
+//   try {
+//     const { password, confirmPassword } = req.body;
+//     if (password === confirmPassword) {
+//       const users = await selectUserByEmailAndCode(req.body);
+//       if (users) {
+//         const newPassword = await argon.hash(req.body.password);
+//         const reset = await updateUser(users.userId, { password: newPassword });
+//         if (reset) {
+//           await deleteForgotPassword(users.id);
+//           return res.status(200).json({
+//             success: true,
+//             message: "Password updated, please re-login.",
+//           });
+//         }
+//       } else {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Email or code is not valid",
+//         });
+//       }
+//     } else {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Password and confirm password must be match",
+//       });
+//     }
+//   } catch (error) {
+//     if (error) errorHandler(error, res);
+//   }
+// };
+
+module.exports = {
+  login,
+  register,
+  // forgotPassword,
+  // resetPassword,
+};

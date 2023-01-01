@@ -26,6 +26,12 @@ const errorHandler = (error, res) => {
       });
     }
   }
+  if (error.message.includes("Cannot read property 'id' of undefined")) {
+    return res.status(400).json({
+      success: false,
+      message: "Email not registered",
+    });
+  }
   return res.status(500).json({
     succes: false,
     message: "Something happend in our backend",

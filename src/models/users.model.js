@@ -16,7 +16,7 @@ exports.createUsers = async (data, cb) => {
       data.password,
       data.picture,
       data.displayName,
-      data.role,
+      1, //untuk register user
     ];
 
     const newUsers = await db.query(sql, values, cb);

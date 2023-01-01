@@ -12,10 +12,30 @@ exports.readAllOrders = async () => {
 
 exports.createOrder = async (data) => {
   try {
-    const sql = `INSERT INTO "order" (name, picture) VALUES ($1,$2) RETURNING *`;
+    const sql = `INSERT INTO "order" ("userId", 
+    "statusId", 
+    "productId", 
+    "paymentMethodId",
+    "promoId",
+    "name",
+    "address",
+    "phoneNumberRecipient",
+    "tax",
+    "amount",
+    "totalPrice")
+    VALUES ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`;
     const values = [
+      data.userId,
+      data.statusId,
+      data.productId,
+      data.paymentMethodId,
+      data.promoId,
       data.name,
-      data.picture
+      data.address,
+      data.phoneNumberRecipient,
+      data.tax,
+      data.amount,
+      data.totalPrice,
     ];
     const newOrder = await db.query(sql, values);
     return newOrder.rows[0];
@@ -36,14 +56,23 @@ exports.readOrder = async (id) => {
 
 exports.updateOrder = async (id, data) => {
   try {
-    const sql = `UPDATE "order" SET "name" = COALESCE(NULLIF($1, ''), "name"), "picture" = COALESCE(NULLIF($3, ''), "picture") WHERE id = $2 RETURNING *`;
+    const sql = `UPDATE "order" SET "userId" = COALESCE(NULLIF($1, '')::INTEGER, "userId"), "statusId" = COALESCE(NULLIF($2, '')::INTEGER, "statusId"), "productId" = COALESCE(NULLIF($3, '')::INTEGER, "productId"), "paymentMethodId" = COALESCE(NULLIF($4, '')::INTEGER, "paymentMethodId"), "promoId" = COALESCE(NULLIF($5, '')::INTEGER, "promoId"), "name" = COALESCE(NULLIF($6, ''), "name"), "address" = COALESCE(NULLIF($7, ''), "address"), "phoneNumberRecipient" = COALESCE(NULLIF($8, ''), "phoneNumberRecipient"), "tax" = COALESCE(NULLIF($9, ''), "tax"), "amount" = COALESCE(NULLIF($10, ''), "amount"), "totalPrice" = COALESCE(NULLIF($11, ''), "totalPrice") WHERE id = $12 RETURNING *`;
     const values = [
+      data.userId,
+      data.statusId,
+      data.productId,
+      data.paymentMethodId,
+      data.promoId,
       data.name,
+      data.address,
+      data.phoneNumberRecipient,
+      data.tax,
+      data.amount,
+      data.totalPrice,
       id,
-      data.picture
     ];
-    const newOrder = await db.query(sql, values)
-    return newOrder.rows[0]
+    const newOrder = await db.query(sql, values);
+    return newOrder.rows[0];
   } catch (error) {
     if (error) throw error;
   }

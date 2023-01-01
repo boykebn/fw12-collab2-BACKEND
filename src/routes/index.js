@@ -10,6 +10,7 @@ routers.use("/users", require("./users.router"));
 routers.use("/productSize", require("./productSize.router"));
 routers.use("/paymentMethod", require("./paymentMethod.router"));
 routers.use("/promo", require("./promo.router"));
+routers.use("/order", require("./order.router"));
 
 
 

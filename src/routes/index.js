@@ -12,4 +12,8 @@ routers.use("/paymentMethod", require("./paymentMethod.router"));
 routers.use("/promo", require("./promo.router"));
 
 
+
+routers.use('/auth', require('./auth.router') )
+
+
 module.exports = routers

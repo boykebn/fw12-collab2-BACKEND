@@ -44,7 +44,7 @@ exports.getPromoById = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Promo retrieved successfully",
-            results: Promo
+            results: Promo,
         });
     } catch (error) {
         if (error) return errorHandler(error, res);
@@ -62,7 +62,7 @@ exports.updatePromo = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Promo updated successfully",
-            results: Promo
+            results: Promo,
         });
     } catch (error) {
         if (error) return errorHandler(error, res)

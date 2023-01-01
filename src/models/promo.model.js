@@ -46,7 +46,7 @@ exports.getPromoById = async (id) => {
 
 exports.updatePromo = async (data, id) => {
     try {
-        const sql = `UPDATE "promo" SET "discount" = COALESCE(NULLIF($1, ''), "discount"), "code"= COALESCE (NULLIF($2, ''), "code"), "name" = (NULLIF($3, ''), "name"), "description" = (NULLIF($4, ''), "description"), "sizeId" = (NULLIF($5, '')::INTEGER, "sizeId") "picture" = (NULLIF($6, ''), "picture") WHERE id = $7 RETURNING *`;
+        const sql = `UPDATE "promo" SET "discount" = COALESCE(NULLIF($1, ''), "discount"), "code" = COALESCE (NULLIF($2, ''), "code"), "name" = (NULLIF($3, ''), "name"), "description" = (NULLIF($4, ''), "description"), "sizeId" = (NULLIF($5, '')::BIGINT,"sizeId"), "picture" = (NULLIF($6, ''), "picture") WHERE id = $7 RETURNING *`;
 
         const values = [
             data.discount,
@@ -54,7 +54,8 @@ exports.updatePromo = async (data, id) => {
             data.name,
             data.description,
             data.sizeId,
-            data.picture
+            data.picture,
+            id,
         ];
 
         const newPromo = await db.query(sql, values);

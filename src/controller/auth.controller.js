@@ -2,7 +2,6 @@ const {selectUserByEmail} = require("../models/users.model");
 
 const login = (req, res) => {
   selectUserByEmail(req.body.email, (err, { rows }) => {
-    console.log(rows)
     if (rows.length) {
       const [user] = rows;
       if (req.body.password === user.password) {

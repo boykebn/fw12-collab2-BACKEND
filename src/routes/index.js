@@ -12,7 +12,7 @@ routers.use("/paymentMethod", require("./paymentMethod.router"));
 routers.use("/promo", require("./promo.router"));
 routers.use("/order", require("./order.router"));
 routers.use("/history", require("./history.router"));
-
+routers.use("/chat", require("./chat.router"));
 
 
 routers.use('/auth', require('./auth.router') )

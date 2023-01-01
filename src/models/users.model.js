@@ -49,7 +49,7 @@ exports.getUsersById = async (id) => {
 exports.updateUsers = async (data, id) => {
   try {
     const sql = `UPDATE "users" SET "firstName" = COALESCE(NULLIF($1, ''), "firstName"),
-        "lastName" = COALESCE(NULLIF($2, ''), "lastName"), "birthDate" = (NULLIF($3, ''), "birthDate"), "gender" =(NULLIF($4, ''), "gender"), "address" =(NULLIF($5, ''), "address"), "phoneNumber" = (NULLIF($6, '')::INTEGER, "phoneNumber"), "email" = (NULLIF($7, ''), "email"), "password" = (NULLIF($8, ''), "password"), "picture" =(NULLIF($9, ''), "picture"), "displayName" = (NULLIF($10, ''), "displayName"),"role" = (NULLIF($11, '')::INTEGER, "role") WHERE id = $12 RETURNING *`;
+        "lastName" = COALESCE(NULLIF($2, ''), "lastName"), "birthDate" = (NULLIF($3, ''), "birthDate"), "gender" =(NULLIF($4, ''), "gender"), "address" =(NULLIF($5, ''), "address"), "phoneNumber" = (NULLIF($6, ''), "phoneNumber"), "email" = (NULLIF($7, ''), "email"), "password" = (NULLIF($8, ''), "password"), "picture" =(NULLIF($9, ''), "picture"), "displayName" = (NULLIF($10, ''), "displayName"),"role" = (NULLIF($11, ''), "role") WHERE id = $12 RETURNING *`;
 
     const values = [
       data.firstName,

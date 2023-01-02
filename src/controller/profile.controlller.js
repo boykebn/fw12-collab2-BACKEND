@@ -72,8 +72,6 @@ exports.updateUser = (req, res) => {
   const validated = jwt.verify(token, process.env.SECRET_KEY);
   const { id } = validated;
   if (req.file) {
-    console.log(req.body.picture);
-    console.log(req.file.filename);
     req.body.picture = req.file.filename;
     getProfile(id, (err, data) => {
       if (err) {

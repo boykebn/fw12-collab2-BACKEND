@@ -4,6 +4,7 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
+  readProductByCategory,
 } = require("../models/product.model");
 const errorHandler = require("../helper/errorHandler.helper");
 
@@ -32,6 +33,19 @@ exports.getProductById = async (req, res) => {
     if (error) return errorHandler(error, res);
   }
 };
+
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const product = await readProductByCategory(req.params.category)
+    res.status(200).json({
+      success: true, 
+      message: "List Products",
+      results: product
+    })
+  } catch (error) {
+    if(error) return errorHandler(error, res)
+  }
+}
 
 exports.createProduct = async (req, res) => {
   try {

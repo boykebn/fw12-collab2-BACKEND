@@ -53,3 +53,14 @@ exports.deleteProduct = async (id) => {
     if(error) throw new Error(error);
   }
 };
+
+exports.readProductByCategory = async (category) => {
+  try {
+    const sql = `SELECT p.*, c.name as category from product p LEFT JOIN "productCategory" pc ON p.id = pc."productId" LEFT JOIN category c ON c.id = pc."categoryId" WHERE c.name = $1`
+    const values = [category]
+    const products = await db.query(sql, values)
+    return products.rows
+  } catch (error) {
+    if(error) throw new Error(error)
+  }
+}

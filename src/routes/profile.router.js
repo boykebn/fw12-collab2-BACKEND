@@ -1,10 +1,10 @@
 const profile = require('express').Router()
-const {readProfile, uploadProfilePicture, updateUser} = require('../controller/profile.controlller')
+
+const {readProfile, updateProfile} = require('../controller/profile.controlller')
+const authMiddleware = require('../middleware/auth.middleware')
 const uploadMiddleware = require('../middleware/upload.middleware')
 
-profile.get('/', readProfile)
-// profile.post('/', uploadMiddleware, uploadProfilePicture)
-
-profile.patch('/', uploadMiddleware, updateUser)
+profile.get('/', authMiddleware, readProfile)
+profile.patch('/', authMiddleware, uploadMiddleware, updateProfile)
 
 module.exports = profile

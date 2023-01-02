@@ -78,17 +78,20 @@ exports.updateUser = (req, res) => {
         return errorHandler(err, res);
       }
       const [user] = data.rows;
+      console.log(data.rows[0].picture)
       if (data.rows.length) {
-        fm.ensureFile("uploads/" + user.picture, (err) => {
-          if (err) {
-            return errorHandler(err, res);
-          }
-          fs.rm("uploads/" + user.picture, (err) => {
+        if (data.rows[0].picture) {
+          fm.ensureFile("uploads/" + user.picture, (err) => {
             if (err) {
               return errorHandler(err, res);
             }
+            fs.rm("uploads/" + user.picture, (err) => {
+              if (err) {
+                return errorHandler(err, res);
+              }
+            });
           });
-        });
+        }
       }
     });
   }

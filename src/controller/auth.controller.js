@@ -104,7 +104,7 @@ const resetPassword = async (req, res) => {
         } 
         
         const data = {
-          password : argon.hash(password)
+          password : await argon.hash(password)
         }
 
         const user = await updateUsers(data, resetRequest.userId)

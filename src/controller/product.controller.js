@@ -5,6 +5,7 @@ const {
   updateProduct,
   deleteProduct,
   readProductByCategory,
+  readProductByIdAndSize,
 } = require("../models/product.model");
 const errorHandler = require("../helper/errorHandler.helper");
 
@@ -24,6 +25,23 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
   try {
     const product = await readProduct(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: "Product retrieved successfully",
+      results: product,
+    });
+  } catch (error) {
+    if (error) return errorHandler(error, res);
+  }
+};
+
+exports.getProductByIdAndSize = async (req, res) => {
+  try {
+    const data = {
+      productId : req.params.productId,
+      sizeId: req.query.sizeId
+    }
+    const product = await readProductByIdAndSize(data);
     res.status(200).json({
       success: true,
       message: "Product retrieved successfully",

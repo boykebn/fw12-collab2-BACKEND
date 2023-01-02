@@ -64,3 +64,15 @@ exports.readProductByCategory = async (category) => {
     if(error) throw new Error(error)
   }
 }
+
+exports.readProductByIdAndSize = async(data) => {
+  try {
+    const sql = `
+    SELECT p.name, p.picture, p.description, p.stock , ps.price FROM product p LEFT JOIN "productSize" ps ON ps."productId" = p.id LEFT JOIN size s ON s.id = ps."sizeId" WHERE p.id = $1 AND s.id = $2`
+    const values = [data.productId, data.sizeId]
+    const product = await db.query(sql, values)
+    return product.rows[0]
+  } catch (error) {
+    if(error) throw new Error(error)
+  }
+}

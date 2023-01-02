@@ -1,8 +1,14 @@
 const errorHandler = require("../helper/errorHandler.helper");
-const { getUsersById } = require("../models/users.model");
+const {
+  getUsersById,
+  updateUsers,
+  getProfile,
+  updateProfile,
+} = require("../models/users.model");
 const { countOrderPaidByUserId } = require("../models/order.model");
 const fs = require("fs");
 const fm = require("fs-extra");
+const jwt = require("jsonwebtoken");
 
 exports.readProfile = async (req, res) => {
   try {
@@ -31,25 +37,71 @@ exports.uploadProfilePicture = (req, res) => {
     if (req.file) {
       req.body.picture = req.file.filename;
       const user = getUsersById(req.userData.id);
-      fm.ensureFile(require("path").join(process.cwd(), "/upload", user.picture), (error) => {
-        if (error) {
-          return errorHandler(error, res);
-        }
-
-        fs.rm(require("path").join(process.cwd(), "/upload", user.picture), (error) => {
+      fm.ensureFile(
+        require("path").join(process.cwd(), "/upload", user.picture),
+        (error) => {
           if (error) {
             return errorHandler(error, res);
           }
-        });
-      });
+
+          fs.rm(
+            require("path").join(process.cwd(), "/upload", user.picture),
+            (error) => {
+              if (error) {
+                return errorHandler(error, res);
+              }
+            }
+          );
+        }
+      );
     }
-    const updateUser = updateUsers(req.body, req.userData.id)
+    const updateUser = updateUsers(req.body, req.userData.id);
     return res.status(200).json({
-        success: true,
-        message: "Profile updated",
-        results: updateUser
-      });
+      success: true,
+      message: "Profile updated",
+      results: updateUser,
+    });
   } catch (error) {
-    return errorHandler(error, res)
+    return errorHandler(error, res);
   }
+};
+
+exports.updateUser = (req, res) => {
+  const authorization = req.headers.authorization;
+  const token = authorization.split(" ")[1];
+  const validated = jwt.verify(token, process.env.SECRET_KEY);
+  const { id } = validated;
+  if (req.file) {
+    console.log(req.body.picture);
+    console.log(req.file.filename);
+    req.body.picture = req.file.filename;
+    getProfile(id, (err, data) => {
+      if (err) {
+        return errorHandler(err, res);
+      }
+      const [user] = data.rows;
+      if (data.rows.length) {
+        fm.ensureFile("uploads/" + user.picture, (err) => {
+          if (err) {
+            return errorHandler(err, res);
+          }
+          fs.rm("uploads/" + user.picture, (err) => {
+            if (err) {
+              return errorHandler(err, res);
+            }
+          });
+        });
+      }
+    });
+  }
+  updateProfile(req.body, id, (err, data) => {
+    if (err) {
+      return errorHandler(err, res);
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Updated user success",
+      results: data.rows[0],
+    });
+  });
 };

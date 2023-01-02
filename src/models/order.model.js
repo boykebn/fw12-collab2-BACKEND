@@ -13,7 +13,7 @@ exports.readAllOrders = async () => {
 exports.createOrder = async (data) => {
   try {
     const sql = `INSERT INTO "order" ("userId", 
-    "statusId", 
+    "status", 
     "productId", 
     "paymentMethodId",
     "promoId",
@@ -26,7 +26,7 @@ exports.createOrder = async (data) => {
     VALUES ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`;
     const values = [
       data.userId,
-      data.statusId,
+      data.status,
       data.productId,
       data.paymentMethodId,
       data.promoId,
@@ -56,7 +56,7 @@ exports.readOrder = async (id) => {
 
 exports.updateOrder = async (id, data) => {
   try {
-    const sql = `UPDATE "order" SET "userId" = COALESCE(NULLIF($1, '')::INTEGER, "userId"), "statusId" = COALESCE(NULLIF($2, '')::INTEGER, "statusId"), "productId" = COALESCE(NULLIF($3, '')::INTEGER, "productId"), "paymentMethodId" = COALESCE(NULLIF($4, '')::INTEGER, "paymentMethodId"), "promoId" = COALESCE(NULLIF($5, '')::INTEGER, "promoId"), "name" = COALESCE(NULLIF($6, ''), "name"), "address" = COALESCE(NULLIF($7, ''), "address"), "phoneNumberRecipient" = COALESCE(NULLIF($8, ''), "phoneNumberRecipient"), "tax" = COALESCE(NULLIF($9, ''), "tax"), "amount" = COALESCE(NULLIF($10, ''), "amount"), "totalPrice" = COALESCE(NULLIF($11, ''), "totalPrice") WHERE id = $12 RETURNING *`;
+    const sql = `UPDATE "order" SET "userId" = COALESCE(NULLIF($1, '')::INTEGER, "userId"), "status" = COALESCE(NULLIF($2, ''), "status"), "productId" = COALESCE(NULLIF($3, '')::INTEGER, "productId"), "paymentMethodId" = COALESCE(NULLIF($4, '')::INTEGER, "paymentMethodId"), "promoId" = COALESCE(NULLIF($5, '')::INTEGER, "promoId"), "name" = COALESCE(NULLIF($6, ''), "name"), "address" = COALESCE(NULLIF($7, ''), "address"), "phoneNumberRecipient" = COALESCE(NULLIF($8, ''), "phoneNumberRecipient"), "tax" = COALESCE(NULLIF($9, ''), "tax"), "amount" = COALESCE(NULLIF($10, ''), "amount"), "totalPrice" = COALESCE(NULLIF($11, ''), "totalPrice") WHERE id = $12 RETURNING *`;
     const values = [
       data.userId,
       data.statusId,
@@ -87,3 +87,13 @@ exports.deleteOrder = async (id) => {
     if (error) throw error;
   }
 };
+
+exports.countOrderPaidByUserId = async (id) => {
+  try {
+    const sql = `SELECT COUNT(*) AS "totalOrder" FROM "order" WHERE "order"."userId" = $1 AND "order"."status" = 'paid'`
+    const values = [id]
+    return totalOrder = await db.query(sql, values)
+  } catch (error) {
+    if(error) throw error 
+  }
+}

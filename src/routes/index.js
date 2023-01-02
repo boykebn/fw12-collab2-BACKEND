@@ -13,6 +13,7 @@ routers.use("/promo", require("./promo.router"));
 routers.use("/order", require("./order.router"));
 routers.use("/history", require("./history.router"));
 routers.use("/chat", require("./chat.router"));
+routers.use("/profile", require("./profile.router"));
 
 
 routers.use('/auth', require('./auth.router') )

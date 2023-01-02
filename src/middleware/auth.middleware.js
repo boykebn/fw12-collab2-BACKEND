@@ -7,7 +7,7 @@ const authMiddleware = (req, res, next) => {
     const token = authorization.slice(7);
 
     try {
-      const payload = jwt.verify(token, "backend-secret");
+      const payload = jwt.verify(token, process.env.SECRET_KEY);
       req.userData = payload;
       next();
     } catch (err) {

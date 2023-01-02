@@ -16,7 +16,7 @@ exports.createUsers = async (data, cb) => {
       data.password,
       data.picture,
       data.displayName,
-      data.role,
+      1, 
     ];
 
     const newUsers = await db.query(sql, values, cb);
@@ -49,7 +49,7 @@ exports.getUsersById = async (id) => {
 exports.updateUsers = async (data, id) => {
   try {
     const sql = `UPDATE "users" SET "firstName" = COALESCE(NULLIF($1, ''), "firstName"),
-        "lastName" = COALESCE(NULLIF($2, ''), "lastName"), "birthDate" = (NULLIF($3, ''), "birthDate"), "gender" =(NULLIF($4, ''), "gender"), "address" =(NULLIF($5, ''), "address"), "phoneNumber" = (NULLIF($6, ''), "phoneNumber"), "email" = (NULLIF($7, ''), "email"), "password" = (NULLIF($8, ''), "password"), "picture" =(NULLIF($9, ''), "picture"), "displayName" = (NULLIF($10, ''), "displayName"),"role" = (NULLIF($11, ''), "role") WHERE id = $12 RETURNING *`;
+        "lastName" = COALESCE(NULLIF($2, ''), "lastName"), "birthDate" =  COALESCE(NULLIF($3, ''), "birthDate"), "gender" = COALESCE(NULLIF($4, ''), "gender"), "address" = COALESCE(NULLIF($5, ''), "address"), "phoneNumber" =  COALESCE(NULLIF($6, ''), "phoneNumber"), "email" =  COALESCE(NULLIF($7, ''), "email"), "password" =  COALESCE(NULLIF($8, ''), "password"), "picture" = COALESCE(NULLIF($9, ''), "picture"), "displayName" =  COALESCE(NULLIF($10, ''), "displayName"),"role" =  COALESCE(NULLIF($11, ''), "role") WHERE id = $12 RETURNING *`;
 
     const values = [
       data.firstName,
@@ -82,7 +82,7 @@ exports.deleteUsers = async (id) => {
   }
 };
 
-exports.selectUserByEmail = async (email, cb) => {
+exports.selectUserByEmail = async (email) => {
   try {
     const sql = `SELECT * FROM users WHERE email=$1`;
     const emailUser = await db.query(sql, [email]);

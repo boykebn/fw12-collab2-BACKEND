@@ -21,6 +21,17 @@ exports.readForgotPassword = async (id) => {
   }
 };
 
+exports.readForgotPasswordByEmailAndCode = async (data) => {
+  try {
+    const sql = `SELECT * FROM "forgotPassword" WHERE email = $1 AND code = $2`;
+    const values = [data.email, data.code];
+    const forgotPassword = await db.query(sql, values);
+    return forgotPassword.rows[0];
+  } catch (error) {
+    if(error) throw new Error(error);
+  }
+};
+
 exports.createForgotPassword = async (data) => {
   try {
     const sql = `INSERT INTO "forgotPassword" ("userId", "email", "code") VALUES ($1, $2, $3) RETURNING *`;

@@ -16,7 +16,7 @@ exports.createUsers = async (data, cb) => {
       data.password,
       data.picture,
       data.displayName,
-      1, 
+      1,
     ];
 
     const newUsers = await db.query(sql, values, cb);
@@ -90,4 +90,31 @@ exports.selectUserByEmail = async (email) => {
   } catch (error) {
     if (error) throw error;
   }
+};
+
+exports.getProfile = (id, cb) => {
+  const sql = `SELECT * FROM users WHERE id=$1`;
+  const value = [id];
+  db.query(sql, value, cb);
+};
+
+exports.updateProfile = async (data, id, cb) => {
+  const sql = `UPDATE "users" SET "firstName" = COALESCE(NULLIF($1, ''), "firstName"),
+        "lastName" = COALESCE(NULLIF($2, ''), "lastName"), "birthDate" =  COALESCE(NULLIF($3, ''), "birthDate"), "gender" = COALESCE(NULLIF($4, ''), "gender"), "address" = COALESCE(NULLIF($5, ''), "address"), "phoneNumber" =  COALESCE(NULLIF($6, ''), "phoneNumber"), "email" =  COALESCE(NULLIF($7, ''), "email"), "password" =  COALESCE(NULLIF($8, ''), "password"), "picture" = COALESCE(NULLIF($9, ''), "picture"), "displayName" =  COALESCE(NULLIF($10, ''), "displayName"),"role" =  COALESCE(NULLIF($11, ''), "role") WHERE id = $12 RETURNING *`;
+
+  const values = [
+    data.firstName,
+    data.lastName,
+    data.birthDate,
+    data.gender,
+    data.address,
+    data.phoneNumber,
+    data.email,
+    data.password,
+    data.picture,
+    data.displayName,
+    data.role,
+    id,
+  ];
+  db.query(sql, values, cb);
 };

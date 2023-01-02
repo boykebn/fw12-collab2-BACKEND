@@ -1,5 +1,5 @@
 const errorHandler = require("../helper/errorHandler.helper");
-const { getUsersById } = require("../models/users.model");
+const { getUsersById, updateUsers } = require("../models/users.model");
 const { countOrderPaidByUserId } = require("../models/order.model");
 const fs = require("fs");
 const fm = require("fs-extra");
@@ -26,30 +26,29 @@ exports.readProfile = async (req, res) => {
   }
 };
 
-exports.uploadProfilePicture = (req, res) => {
+exports.updateProfile = async (req, res) => {
   try {
     if (req.file) {
       req.body.picture = req.file.filename;
-      const user = getUsersById(req.userData.id);
-      fm.ensureFile(require("path").join(process.cwd(), "/upload", user.picture), (error) => {
+      const user = await getUsersById(req.userData.id);
+      fm.ensureFile("uploads/" + user.picture, (error) => {
         if (error) {
           return errorHandler(error, res);
         }
-
-        fs.rm(require("path").join(process.cwd(), "/upload", user.picture), (error) => {
+        fs.rm("uploads/" + user.picture, { force: true }, (error) => {
           if (error) {
             return errorHandler(error, res);
           }
         });
       });
     }
-    const updateUser = updateUsers(req.body, req.userData.id)
+    const updateUser = await updateUsers(req.body, req.userData.id);
     return res.status(200).json({
-        success: true,
-        message: "Profile updated",
-        results: updateUser
-      });
+      success: true,
+      message: "Profile updated",
+      results: updateUser,
+    });
   } catch (error) {
-    return errorHandler(error, res)
+    return errorHandler(error, res);
   }
 };

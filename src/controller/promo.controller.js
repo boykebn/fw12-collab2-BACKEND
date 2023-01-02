@@ -9,7 +9,6 @@ const {
 const fs = require("fs");
 const fm = require("fs-extra");
 
-
 exports.getAllPromo = async (req, res) => {
   try {
     const allPromo = await getAllPromo();
@@ -25,6 +24,9 @@ exports.getAllPromo = async (req, res) => {
 
 exports.createPromo = async (req, res) => {
   try {
+    if (req.file) {
+      req.body.picture = req.file.filename;
+    }
     const Promo = await createPromo(req.body);
     res.status(200).json({
       success: true,
@@ -53,8 +55,8 @@ exports.updatePromo = async (req, res) => {
   try {
     if (req.file) {
       req.body.picture = req.file.filename;
-      const user = await getPromoById(req.userData.id);
-      if(user.picture){
+      const user = await getPromoById(req.params.id);
+      if (user.picture) {
         fm.ensureFile("uploads/" + user.picture, (error) => {
           if (error) {
             return errorHandler(error, res);
@@ -67,7 +69,7 @@ exports.updatePromo = async (req, res) => {
         });
       }
     }
-    const Promo = await updatePromo(req.userData.id, req.body);
+    const Promo = await updatePromo(req.params.id, req.body);
     return res.status(200).json({
       success: true,
       message: "Promo updated successfully",

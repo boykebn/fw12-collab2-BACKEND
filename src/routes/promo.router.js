@@ -13,7 +13,7 @@ const uploadMiddleware = require("../middleware/upload.middleware")
 
 
 Promo.post("/add", authMiddleware, uploadMiddleware, createPromo)
-Promo.post("/edit", authMiddleware, uploadMiddleware, updatePromo)
+Promo.patch("/edit/:id", authMiddleware, uploadMiddleware, updatePromo)
 
 Promo.get("/", getAllPromo);
 Promo.post("/", createPromo);

@@ -12,15 +12,18 @@ exports.getAllPromo = async () => {
 
 exports.createPromo = async (data) => {
   try {
-    const sql = `INSERT INTO "promo" (discount, code, name, description, "sizeId", picture) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
+    const sql = `INSERT INTO "promo" (discount, code, name, description, "sizeId", picture, "deliveryMethodId", price, "startDate", "endDate") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9. $10) RETURNING *`;
     const values = [
-      data.dicount,
+      data.discount,
       data.code,
       data.name,
       data.description,
       data.sizeId,
-      data.picture
-
+      data.picture,
+      data.deliveryMethodId,
+      data.price,
+      data.startDate,
+      data.endDate,
     ];
     const newPromo = await db.query(sql, values);
     return newPromo.rows[0];
@@ -51,8 +54,8 @@ exports.updatePromo = async (id, data) => {
       data.picture,
       id,
     ];
-    const newPromo = await db.query(sql, values)
-    return newPromo.rows[0]
+    const newPromo = await db.query(sql, values);
+    return newPromo.rows[0];
   } catch (error) {
     if (error) throw error;
   }

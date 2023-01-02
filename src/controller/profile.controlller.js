@@ -31,16 +31,18 @@ exports.updateProfile = async (req, res) => {
     if (req.file) {
       req.body.picture = req.file.filename;
       const user = await getUsersById(req.userData.id);
-      fm.ensureFile("uploads/" + user.picture, (error) => {
-        if (error) {
-          return errorHandler(error, res);
-        }
-        fs.rm("uploads/" + user.picture, { force: true }, (error) => {
+      if(user.picture){
+        fm.ensureFile("uploads/" + user.picture, (error) => {
           if (error) {
             return errorHandler(error, res);
           }
+          fs.rm("uploads/" + user.picture, { force: true }, (error) => {
+            if (error) {
+              return errorHandler(error, res);
+            }
+          });
         });
-      });
+      }
     }
     const updateUser = await updateUsers(req.body, req.userData.id);
     return res.status(200).json({

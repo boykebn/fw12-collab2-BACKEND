@@ -87,3 +87,14 @@ exports.createNameProduct = async (data) => {
     if(error) throw new Error(error)
   }
 };
+
+exports.updateProductAdmin = async (id, data) => {
+  try {
+    const sql = `UPDATE product SET "name"=COALESCE(NULLIF($1, ''), "name"), "picture"=COALESCE(NULLIF($2, ''), "picture"), "description"=COALESCE(NULLIF($3, ''), "description"),  "stock"=COALESCE(NULLIF($4, '')::INTEGER, "stock"), "updatedAt"=$5 WHERE id = $6 RETURNING *`;
+    const values = [data.name, data.picture, data.description, data.stock, new Date(),id];
+    const products = await db.query(sql, values);
+    return products.rows[0];
+  } catch (error) {
+    if(error) throw new Error(error);
+  }
+};

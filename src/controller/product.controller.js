@@ -2,13 +2,14 @@ const {
   readAllProducts,
   readProduct,
   createProduct,
-  updateProduct,
+  updateProductAdmin,
   deleteProduct,
   readProductByCategory,
   readProductByIdAndSize,
 } = require("../models/product.model");
 const errorHandler = require("../helper/errorHandler.helper");
 const { productPrice } = require("../models/productSize.model");
+const {updateProductSizeAdmin} = require('../models/productSize.model')
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -98,7 +99,24 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await updateProduct(req.params.id, req.body);
+    const dataProduct = {
+      name: req.body.name,
+      description: req.body.description,
+      stock: req.body.stock,
+      picture: req.body.picture,
+    };
+    const updateProduct = await updateProductAdmin(req.params.id, dataProduct);
+    const dataPrice = {
+      price: req.body.price,
+      sizeId: req.body.sizeId,
+      productId: req.params.id,
+      size: req.body.sizeId
+    };
+    console.log(updateProduct.id)
+    const updatePrice = await updateProductSizeAdmin(updateProduct.id, dataPrice);
+    console.log(updatePrice)
+    const product = { ...updateProduct, ...updatePrice };
+    
     res.status(200).json({
       success: true,
       message: "Product updated successfully",

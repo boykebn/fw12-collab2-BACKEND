@@ -62,3 +62,16 @@ exports.productPrice = async (data) => {
     if (error) throw error;
   }
 };
+
+
+exports.updateProductSizeAdmin = async (id, data) => {
+  try {
+    const sql = `UPDATE "productSize" SET "productId" = COALESCE(NULLIF($5, '')::INTEGER, "productId"), "sizeId" = COALESCE(NULLIF($2, '')::INTEGER, "sizeId"), "price" = COALESCE(NULLIF($3, '')::INTEGER, "price") WHERE "productId" = $1 AND "sizeId" = $4 RETURNING *`;
+    const values = [id, data.sizeId, data.price, data.size, data.productId];
+    const newSize = await db.query(sql, values);
+    console.log(newSize.rows[0])
+    return newSize.rows[0];
+  } catch (error) {
+    if (error) throw error;
+  }
+};

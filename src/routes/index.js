@@ -1,6 +1,6 @@
 const routers = require("express").Router();
 const authMiddleware = require('../middleware/auth.middleware')
-
+const { createTransaction } = require("../controller/order.controller")
 
 routers.use("/product", require("./product.router"));
 routers.use("/size", require("./size.router"));
@@ -17,9 +17,8 @@ routers.use("/order", require("./order.router"));
 routers.use("/history", require("./history.router"));
 routers.use("/chat", require("./chat.router"));
 routers.use("/profile", authMiddleware, require("./profile.router"));
-
-
 routers.use('/auth', require('./auth.router') )
+routers.use('/transaction', require('./transaction.router'))
 
 
 module.exports = routers

@@ -14,28 +14,30 @@ exports.createOrder = async (data) => {
   try {
     const sql = `INSERT INTO "order" ("userId", 
     "status", 
-    "productId", 
+    "deliveryMethodId", 
     "paymentMethodId",
     "promoId",
-    "name",
     "address",
     "phoneNumberRecipient",
     "tax",
-    "amount",
-    "totalPrice")
-    VALUES ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`;
+    "totalPrice",
+    "time",
+    "subTotal",
+    "shipping")
+    VALUES ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`;
     const values = [
       data.userId,
       data.status,
-      data.productId,
+      data.deliveryMethodId,
       data.paymentMethodId,
       data.promoId,
-      data.name,
       data.address,
       data.phoneNumberRecipient,
       data.tax,
-      data.amount,
       data.totalPrice,
+      data.time,
+      data.subTotal,
+      data.shipping
     ];
     const newOrder = await db.query(sql, values);
     return newOrder.rows[0];
@@ -54,22 +56,43 @@ exports.readOrder = async (id) => {
   }
 };
 
+exports.readOrderedProductOnProcess = async (id) => {
+  try {
+    const sql = `SELECT o.id, p.name, p.picture, op.price, op.quantity, s.name as size FROM "order" o LEFT JOIN "orderedProduct" op ON op."orderId" = o.id LEFT JOIN product p ON p.id = op."productId" LEFT JOIN size s ON s.id = op."sizeId" WHERE "userId" = $1 AND o.status = 'unpaid'`
+    const values = [id]
+    const order = await db.query(sql, values)
+    return order.rows[0]
+  } catch (error) {
+    if(error) throw new Error(error)
+  }
+}
+
+exports.readOrderedProductOnConfirm = async (id) => {
+  try {
+    const sql = `SELECT o.id, u."displayName",  o.address, o."paymentMethodId", o."phoneNumberRecipient", o."subTotal", o.tax, o.shipping, o."totalPrice" , p.name, p.picture, op.price, op.quantity, s.name as size FROM "order" o LEFT JOIN "orderedProduct" op ON op."orderId" = o.id LEFT JOIN product p ON p.id = op."productId" LEFT JOIN size s ON s.id = op."sizeId" LEFT JOIN users u ON u.id = o."userId" WHERE o.status = 'paid'`
+    const order = await db.query(sql)
+    return order.rows[0]
+  } catch (error) {
+    if(error) throw new Error(error)
+  }
+}
+
 exports.updateOrder = async (id, data) => {
   try {
-    const sql = `UPDATE "order" SET "userId" = COALESCE(NULLIF($1, '')::INTEGER, "userId"), "status" = COALESCE(NULLIF($2, ''), "status"), "productId" = COALESCE(NULLIF($3, '')::INTEGER, "productId"), "paymentMethodId" = COALESCE(NULLIF($4, '')::INTEGER, "paymentMethodId"), "promoId" = COALESCE(NULLIF($5, '')::INTEGER, "promoId"), "name" = COALESCE(NULLIF($6, ''), "name"), "address" = COALESCE(NULLIF($7, ''), "address"), "phoneNumberRecipient" = COALESCE(NULLIF($8, ''), "phoneNumberRecipient"), "tax" = COALESCE(NULLIF($9, ''), "tax"), "amount" = COALESCE(NULLIF($10, ''), "amount"), "totalPrice" = COALESCE(NULLIF($11, ''), "totalPrice") WHERE id = $12 RETURNING *`;
+    const sql = `UPDATE "order" SET "userId" = COALESCE(NULLIF($1, '')::INTEGER, "userId"), "status" = COALESCE(NULLIF($2, ''), "status"), "deliveryMethodId" = COALESCE(NULLIF($3, '')::INTEGER, "deliveryMethodId"), "paymentMethodId" = COALESCE(NULLIF($4, '')::INTEGER, "paymentMethodId"), "promoId" = COALESCE(NULLIF($5, '')::INTEGER, "promoId"),  "address" = COALESCE(NULLIF($6, ''), "address"), "phoneNumberRecipient" = COALESCE(NULLIF($7, ''), "phoneNumberRecipient"), "tax" = COALESCE(NULLIF($8, '')::INTEGER, "tax"), "totalPrice" = COALESCE(NULLIF($9, '')::INTEGER, "totalPrice"), "subTotal" = COALESCE(NULLIF($10, '')::INTEGER, "subTotal"), "shipping" = COALESCE(NULLIF($11, '')::INTEGER, "shipping") WHERE id = $12 RETURNING *`;
     const values = [
       data.userId,
-      data.statusId,
-      data.productId,
+      data.status,
+      data.deliveryMethodId,
       data.paymentMethodId,
       data.promoId,
-      data.name,
       data.address,
       data.phoneNumberRecipient,
       data.tax,
-      data.amount,
       data.totalPrice,
-      id,
+      data.subTotal,
+      data.shipping,
+      id
     ];
     const newOrder = await db.query(sql, values);
     return newOrder.rows[0];

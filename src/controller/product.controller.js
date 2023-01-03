@@ -99,6 +99,9 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
+    if (req.file) {
+      req.body.picture = req.file.filename;
+    }
     const dataProduct = {
       name: req.body.name,
       description: req.body.description,

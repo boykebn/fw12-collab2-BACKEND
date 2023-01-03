@@ -12,7 +12,7 @@ const authMiddleware = require("../middleware/auth.middleware")
 const uploadMiddleware = require("../middleware/upload.middleware")
 
 product.post("/add", authMiddleware, uploadMiddleware, createProduct)
-product.patch("/edit/:id", updateProduct)
+product.patch("/edit/:id", authMiddleware, uploadMiddleware, updateProduct)
 
 product.get("/", getAllProducts);
 product.get("/category/:category", getProductsByCategory);

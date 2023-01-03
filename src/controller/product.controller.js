@@ -115,9 +115,7 @@ exports.updateProduct = async (req, res) => {
       productId: req.params.id,
       size: req.body.sizeId
     };
-    console.log(updateProduct.id)
     const updatePrice = await updateProductSizeAdmin(updateProduct.id, dataPrice);
-    console.log(updatePrice)
     const product = { ...updateProduct, ...updatePrice };
     
     res.status(200).json({

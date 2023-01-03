@@ -19,7 +19,7 @@ product.get("/category/:category", getProductsByCategory);
 product.get("/details/:productId", getProductByIdAndSize);
 product.get("/:id", getProductById);
 product.post("/", createProduct);
-product.patch("/:id", updateProduct);
+product.patch("/:id", uploadMiddleware, updateProduct);
 product.delete("/:id", deleteProduct);
 
 module.exports = product;

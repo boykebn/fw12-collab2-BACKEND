@@ -76,3 +76,14 @@ exports.readProductByIdAndSize = async(data) => {
     if(error) throw new Error(error)
   }
 }
+
+exports.createNameProduct = async (data) => {
+  try {
+    const sql = `INSERT INTO product ("name") VALUES ($1) RETURNING *`;
+    const values = [data];
+    const products = await db.query(sql, values);
+    return products.rows[0];
+  } catch (error) {
+    if(error) throw new Error(error)
+  }
+};

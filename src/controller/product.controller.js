@@ -2,12 +2,14 @@ const {
   readAllProducts,
   readProduct,
   createProduct,
-  updateProduct,
+  updateProductAdmin,
   deleteProduct,
   readProductByCategory,
   readProductByIdAndSize,
 } = require("../models/product.model");
 const errorHandler = require("../helper/errorHandler.helper");
+const { productPrice } = require("../models/productSize.model");
+const {updateProductSizeAdmin} = require('../models/productSize.model')
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -38,9 +40,9 @@ exports.getProductById = async (req, res) => {
 exports.getProductByIdAndSize = async (req, res) => {
   try {
     const data = {
-      productId : req.params.productId,
-      sizeId: req.query.sizeId
-    }
+      productId: req.params.productId,
+      sizeId: req.query.sizeId,
+    };
     const product = await readProductByIdAndSize(data);
     res.status(200).json({
       success: true,
@@ -54,20 +56,37 @@ exports.getProductByIdAndSize = async (req, res) => {
 
 exports.getProductsByCategory = async (req, res) => {
   try {
-    const product = await readProductByCategory(req.params.category)
+    const product = await readProductByCategory(req.params.category);
     res.status(200).json({
-      success: true, 
+      success: true,
       message: "List Products",
-      results: product
-    })
+      results: product,
+    });
   } catch (error) {
-    if(error) return errorHandler(error, res)
+    if (error) return errorHandler(error, res);
   }
-}
+};
 
 exports.createProduct = async (req, res) => {
   try {
-    const product = await createProduct(req.body);
+    if (req.file) {
+      req.body.picture = req.file.filename;
+    }
+    const productList = {
+      name: req.body.name,
+      description: req.body.description,
+      stock: req.body.stock,
+      picture: req.body.picture,
+    };
+    const addProduct = await createProduct(productList);
+
+    const priceList = {
+      sizeId: req.body.sizeId,
+      price: req.body.price,
+      productId: addProduct.id,
+    };
+    const addPrice = await productPrice(priceList);
+    const product = { ...addProduct, ...addPrice };
     res.status(200).json({
       success: true,
       message: "Product created successfully",
@@ -80,7 +99,27 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await updateProduct(req.params.id, req.body);
+    if (req.file) {
+      req.body.picture = req.file.filename;
+    }
+    const dataProduct = {
+      name: req.body.name,
+      description: req.body.description,
+      stock: req.body.stock,
+      picture: req.body.picture,
+    };
+    const updateProduct = await updateProductAdmin(req.params.id, dataProduct);
+    const dataPrice = {
+      price: req.body.price,
+      sizeId: req.body.sizeId,
+      productId: req.params.id,
+      size: req.body.sizeId
+    };
+    console.log(updateProduct.id)
+    const updatePrice = await updateProductSizeAdmin(updateProduct.id, dataPrice);
+    console.log(updatePrice)
+    const product = { ...updateProduct, ...updatePrice };
+    
     res.status(200).json({
       success: true,
       message: "Product updated successfully",

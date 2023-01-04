@@ -12,8 +12,10 @@ exports.readAllProducts = async () => {
 
 exports.readProduct = async (id) => {
   try {
-    const sql = `SELECT p.*, pz.price FROM product p
+    const sql = `SELECT p.*, pz.price, c."nameCategory" FROM product p
     JOIN "productSize" pz ON pz."productId" = p.id
+    JOIN "productCategory" pc ON pc."productId" = p.id
+    JOIN "category" c ON c.id = pc."categoryId"
     WHERE p.id = $1`;
     const values = [id];
     const products = await db.query(sql, values);

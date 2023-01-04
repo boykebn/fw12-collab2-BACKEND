@@ -30,19 +30,8 @@ exports.updateProfile = async (req, res) => {
   try {
     if (req.file) {
       req.body.picture = req.file.path;
-      const user = await getUsersById(req.userData.id);
-      if(user.picture){
-        fm.ensureFile("uploads/" + user.picture, (error) => {
-          if (error) {
-            return errorHandler(error, res);
-          }
-          fs.rm("uploads/" + user.picture, { force: true }, (error) => {
-            if (error) {
-              return errorHandler(error, res);
-            }
-          });
-        });
-      }
+      console.log(req.body.picture);
+      await getUsersById(req.userData.id);
     }
     const updateUser = await updateUsers(req.body, req.userData.id);
     return res.status(200).json({
@@ -54,4 +43,3 @@ exports.updateProfile = async (req, res) => {
     return errorHandler(error, res);
   }
 };
-

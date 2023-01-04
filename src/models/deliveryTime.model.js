@@ -49,7 +49,7 @@ exports.updateDeliveryTime = async (id, data) => {
 
 exports.deleteDeliveryTime = async (id) => {
   try {
-    const sql = `DELETE FROM "deliveryTime" WHERE id = $1 RETURNING *`;
+    const sql = `DELETE FROM "deliveryTime" WHERE "productId" = $1 RETURNING *`;
     const values = [id];
     const deliveryTime = await db.query(sql, values);
     return deliveryTime.rows[0];

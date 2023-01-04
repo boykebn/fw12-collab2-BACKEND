@@ -7,10 +7,7 @@ const {
     deletePromo,
 } = require("../controller/promo.controller");
 const authMiddleware = require('../middleware/auth.middleware')
-const uploadMiddleware = require("../middleware/upload.middleware")
-
-
-
+const {uploadMiddleware} = require("../middleware/upload.middleware")
 
 Promo.post("/add", authMiddleware, uploadMiddleware, createPromo)
 Promo.patch("/edit/:id", authMiddleware, uploadMiddleware, updatePromo)

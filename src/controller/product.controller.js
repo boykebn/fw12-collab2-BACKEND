@@ -70,7 +70,7 @@ exports.getProductsByCategory = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     if (req.file) {
-      req.body.picture = req.file.filename;
+      req.body.picture = req.file.path;
     }
     const productList = {
       name: req.body.name,
@@ -100,7 +100,7 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     if (req.file) {
-      req.body.picture = req.file.filename;
+      req.body.picture = req.file.path;
     }
     const dataProduct = {
       name: req.body.name,

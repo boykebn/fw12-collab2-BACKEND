@@ -5,11 +5,13 @@ const {
   updateProductAdmin,
   deleteProduct,
   readProductByCategory,
-  readProductByIdAndSize,
+  readProductByIdAndSize
 } = require("../models/product.model");
+const {createDeliveryTime} = require("../models/deliveryTime.model")
 const errorHandler = require("../helper/errorHandler.helper");
 const { productPrice } = require("../models/productSize.model");
 const {updateProductSizeAdmin} = require('../models/productSize.model')
+const cloudinary = require('../middleware/upload.middleware')
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -70,7 +72,7 @@ exports.getProductsByCategory = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     if (req.file) {
-      req.body.picture = req.file.filename;
+      req.body.picture = req.file.path;
     }
     const productList = {
       name: req.body.name,
@@ -86,7 +88,15 @@ exports.createProduct = async (req, res) => {
       productId: addProduct.id,
     };
     const addPrice = await productPrice(priceList);
-    const product = { ...addProduct, ...addPrice };
+
+    const timeDelivery = {
+      startHour: req.body.startHour,
+      endHour: req.body.endHour,
+      productId: addProduct.id
+    }
+    const addTimeDelivery = await createDeliveryTime(timeDelivery)
+
+    const product = { ...addProduct, ...addPrice, ...addTimeDelivery };
     res.status(200).json({
       success: true,
       message: "Product created successfully",
@@ -100,8 +110,11 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     if (req.file) {
-      req.body.picture = req.file.filename;
-    }
+      if (req.file) {
+        await cloudinary?.uploader?.destroy(req.file.filename);
+        req.body.picture = req.file.path;
+      }
+      }
     const dataProduct = {
       name: req.body.name,
       description: req.body.description,

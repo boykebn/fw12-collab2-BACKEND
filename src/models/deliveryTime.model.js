@@ -23,8 +23,8 @@ exports.readDeliveryTime = async (id) => {
 
 exports.createDeliveryTime = async (data) => {
   try {
-    const sql = `INSERT INTO "deliveryTime" ("startDay", "endDay", "startHour", "endHour", "productId") VALUES ($1, $2, $3, $4, $5) RETURNING *`;
-    const values = [data.startDay, data.endDay, data.startHour, data.endHour, data.productId];
+    const sql = `INSERT INTO "deliveryTime" ("startHour", "endHour", "productId") VALUES ($1, $2, $3) RETURNING *`;
+    const values = [data.startHour, data.endHour, data.productId];
     const deliveryTime = await db.query(sql, values);
     return deliveryTime.rows[0];
   } catch (error) {

@@ -29,7 +29,7 @@ exports.readProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     if (req.file) {
-      req.body.picture = req.file.filename;
+      req.body.picture = req.file.path;
       const user = await getUsersById(req.userData.id);
       if(user.picture){
         fm.ensureFile("uploads/" + user.picture, (error) => {

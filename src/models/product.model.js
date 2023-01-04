@@ -12,7 +12,9 @@ exports.readAllProducts = async () => {
 
 exports.readProduct = async (id) => {
   try {
-    const sql = `SELECT * FROM product WHERE id = $1`;
+    const sql = `SELECT p.*, pz.price FROM product p
+    JOIN "productSize" pz ON pz."productId" = p.id
+    WHERE p.id = $1`;
     const values = [id];
     const products = await db.query(sql, values);
     return products.rows[0];

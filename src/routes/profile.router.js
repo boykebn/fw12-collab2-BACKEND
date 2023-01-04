@@ -5,6 +5,6 @@ const authMiddleware = require('../middleware/auth.middleware')
 const uploadMiddleware = require('../middleware/upload.middleware')
 
 profile.get('/', authMiddleware, readProfile)
-profile.patch('/', authMiddleware, uploadMiddleware, updateProfile)
+profile.post('/', authMiddleware, uploadMiddleware, updateProfile)
 
 module.exports = profile

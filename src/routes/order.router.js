@@ -1,16 +1,19 @@
-const Order = require("express").Router();
+const order = require("express").Router();
 const {
   getAllOrders,
   getOrderById,
   createOrder,
   updateOrder,
   deleteOrder,
+  getOrderedProductOnProcess,
+
 } = require("../controller/order.controller");
+const authMiddleware = require("../middleware/auth.middleware");
 
-Order.get("/", getAllOrders);
-Order.get("/:id", getOrderById);
-Order.post("/", createOrder);
-Order.patch("/:id", updateOrder);
-Order.delete("/:id", deleteOrder);
+order.get("/", getAllOrders);
+order.get("/:id", getOrderById);
+order.post("/", createOrder);
+order.patch("/:id", updateOrder);
+order.delete("/:id", deleteOrder);
 
-module.exports = Order;
+module.exports = order;

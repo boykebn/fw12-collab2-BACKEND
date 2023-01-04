@@ -44,7 +44,7 @@ exports.updateProductSize = async (id, data) => {
 
 exports.deleteProductSize = async (id) => {
   try {
-    const sql = `DELETE FROM "productSize" WHERE id = $1 RETURNING *`;
+    const sql = `DELETE FROM "productSize" WHERE "productId" = $1 RETURNING *`;
     const newSize = await db.query(sql, [id]);
     return newSize.rows[0];
   } catch (error) {
@@ -58,6 +58,19 @@ exports.productPrice = async (data) => {
     const values = [data.price, data.sizeId, data.productId];
     const promo = await db.query(sql, values);
     return promo.rows[0];
+  } catch (error) {
+    if (error) throw error;
+  }
+};
+
+
+exports.updateProductSizeAdmin = async (id, data) => {
+  try {
+    const sql = `UPDATE "productSize" SET "productId" = COALESCE(NULLIF($5, '')::INTEGER, "productId"), "sizeId" = COALESCE(NULLIF($2, '')::INTEGER, "sizeId"), "price" = COALESCE(NULLIF($3, '')::INTEGER, "price") WHERE "productId" = $1 AND "sizeId" = $4 RETURNING *`;
+    const values = [id, data.sizeId, data.price, data.size, data.productId];
+    const newSize = await db.query(sql, values);
+    console.log(newSize.rows[0])
+    return newSize.rows[0];
   } catch (error) {
     if (error) throw error;
   }

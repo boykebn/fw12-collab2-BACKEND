@@ -2,7 +2,7 @@ const {
   readAllProducts,
   readProduct,
   createProduct,
-  updateProduct,
+  updateProductAdmin,
   deleteProduct,
   readProductByCategory,
   readProductByIdAndSize
@@ -10,6 +10,8 @@ const {
 const {createDeliveryTime} = require("../models/deliveryTime.model")
 const errorHandler = require("../helper/errorHandler.helper");
 const { productPrice } = require("../models/productSize.model");
+const {updateProductSizeAdmin} = require('../models/productSize.model')
+const cloudinary = require('../middleware/upload.middleware')
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -70,7 +72,7 @@ exports.getProductsByCategory = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     if (req.file) {
-      req.body.picture = req.file.filename;
+      req.body.picture = req.file.path;
     }
     const productList = {
       name: req.body.name,
@@ -107,7 +109,28 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await updateProduct(req.params.id, req.body);
+    if (req.file) {
+      if (req.file) {
+        await cloudinary?.uploader?.destroy(req.file.filename);
+        req.body.picture = req.file.path;
+      }
+      }
+    const dataProduct = {
+      name: req.body.name,
+      description: req.body.description,
+      stock: req.body.stock,
+      picture: req.body.picture,
+    };
+    const updateProduct = await updateProductAdmin(req.params.id, dataProduct);
+    const dataPrice = {
+      price: req.body.price,
+      sizeId: req.body.sizeId,
+      productId: req.params.id,
+      size: req.body.sizeId
+    };
+    const updatePrice = await updateProductSizeAdmin(updateProduct.id, dataPrice);
+    const product = { ...updateProduct, ...updatePrice };
+    
     res.status(200).json({
       success: true,
       message: "Product updated successfully",

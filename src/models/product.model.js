@@ -2,7 +2,7 @@ const db = require("../helper/db.helper");
 
 exports.readAllProducts = async () => {
   try {
-    const sql = `SELECT * FROM product`;
+    const sql = `SELECT p.*, pz.price FROM product p JOIN "productSize" pz ON pz."productId" = p.id`;
     const products = await db.query(sql);
     return products.rows;
   } catch (error) {
@@ -12,7 +12,11 @@ exports.readAllProducts = async () => {
 
 exports.readProduct = async (id) => {
   try {
-    const sql = `SELECT * FROM product WHERE id = $1`;
+    const sql = `SELECT p.*, pz.price, c."nameCategory" FROM product p
+    JOIN "productSize" pz ON pz."productId" = p.id
+    JOIN "productCategory" pc ON pc."productId" = p.id
+    JOIN "category" c ON c.id = pc."categoryId"
+    WHERE p.id = $1`;
     const values = [id];
     const products = await db.query(sql, values);
     return products.rows[0];
@@ -56,7 +60,11 @@ exports.deleteProduct = async (id) => {
 
 exports.readProductByCategory = async (category) => {
   try {
-    const sql = `SELECT p.*, c.name as category from product p LEFT JOIN "productCategory" pc ON p.id = pc."productId" LEFT JOIN category c ON c.id = pc."categoryId" WHERE c.name = $1`
+    const sql = `SELECT p.*, c.name as category, pz.price from product p 
+    LEFT JOIN "productCategory" pc ON p.id = pc."productId" 
+    LEFT JOIN category c ON c.id = pc."categoryId"
+    JOIN "productSize" pz ON p.id = pz."productId"
+    WHERE c.name = $1`
     const values = [category]
     const products = await db.query(sql, values)
     return products.rows
@@ -85,5 +93,16 @@ exports.createNameProduct = async (data) => {
     return products.rows[0];
   } catch (error) {
     if(error) throw new Error(error)
+  }
+};
+
+exports.updateProductAdmin = async (id, data) => {
+  try {
+    const sql = `UPDATE product SET "name"=COALESCE(NULLIF($1, ''), "name"), "picture"=COALESCE(NULLIF($2, ''), "picture"), "description"=COALESCE(NULLIF($3, ''), "description"),  "stock"=COALESCE(NULLIF($4, '')::INTEGER, "stock"), "updatedAt"=$5 WHERE id = $6 RETURNING *`;
+    const values = [data.name, data.picture, data.description, data.stock, new Date(),id];
+    const products = await db.query(sql, values);
+    return products.rows[0];
+  } catch (error) {
+    if(error) throw new Error(error);
   }
 };

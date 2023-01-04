@@ -12,9 +12,9 @@ exports.readAllOrderedProducts = async () => {
 
 exports.createOrderedProduct = async (data) => {
   try {
-    const sql = `INSERT INTO "orderedProduct" ("productId", "quantity", "price")
-    VALUES ($1,$2, $3) RETURNING *`;
-    const values = [data.productId, data.quantity, data.price];
+    const sql = `INSERT INTO "orderedProduct" ("productId", "quantity", "price", "sizeId", "orderId")
+    VALUES ($1,$2, $3, $4, $5) RETURNING *`;
+    const values = [data.productId, data.quantity, data.price, data.sizeId, data.orderId];
     const newOrderedProduct = await db.query(sql, values);
     return newOrderedProduct.rows[0];
   } catch (error) {
@@ -34,13 +34,9 @@ exports.readOrderedProduct = async (id) => {
 
 exports.updateOrderedProduct = async (id, data) => {
   try {
-    const sql = `UPDATE "orderedProduct" SET "productId" = COALESCE(NULLIF($1, '')::INTEGER, "productId"), "quantity" = COALESCE(NULLIF($2, '')::INTEGER, "quantity"), "price" = COALESCE(NULLIF($3, '')::INTEGER, "price") WHERE id = $4 RETURNING *`;
-    const values = [
-      data.productId,
-      data.quantity,
-      data.price,
-      id,
-    ];
+    const sql = `UPDATE "orderedProduct" SET "productId" = COALESCE(NULLIF($1, '')::INTEGER, "productId"), "quantity" = COALESCE(NULLIF($2, '')::INTEGER, "quantity"), "price" = COALESCE(NULLIF($3, '')::INTEGER, "price"),  "sizeId" = COALESCE(NULLIF($4, '')::INTEGER, "sizeId"), 
+    "orderId" = COALESCE(NULLIF($5, '')::INTEGER, "orderId") WHERE id = $6 RETURNING *`;
+    const values = [data.productId, data.quantity, data.price, data.sizeId, data.orderId, id];
     const newOrderedProduct = await db.query(sql, values);
     return newOrderedProduct.rows[0];
   } catch (error) {

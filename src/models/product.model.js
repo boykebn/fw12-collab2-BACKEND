@@ -2,7 +2,7 @@ const db = require("../helper/db.helper");
 
 exports.readAllProducts = async () => {
   try {
-    const sql = `SELECT * FROM product`;
+    const sql = `SELECT p.*, pz.price FROM product p JOIN "productSize" pz ON pz."productId" = p.id`;
     const products = await db.query(sql);
     return products.rows;
   } catch (error) {

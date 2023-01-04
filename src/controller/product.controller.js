@@ -5,8 +5,9 @@ const {
   updateProduct,
   deleteProduct,
   readProductByCategory,
-  readProductByIdAndSize,
+  readProductByIdAndSize
 } = require("../models/product.model");
+const {createDeliveryTime} = require("../models/deliveryTime.model")
 const errorHandler = require("../helper/errorHandler.helper");
 const { productPrice } = require("../models/productSize.model");
 
@@ -85,7 +86,15 @@ exports.createProduct = async (req, res) => {
       productId: addProduct.id,
     };
     const addPrice = await productPrice(priceList);
-    const product = { ...addProduct, ...addPrice };
+
+    const timeDelivery = {
+      startHour: req.body.startHour,
+      endHour: req.body.endHour,
+      productId: addProduct.id
+    }
+    const addTimeDelivery = await createDeliveryTime(timeDelivery)
+
+    const product = { ...addProduct, ...addPrice, ...addTimeDelivery };
     res.status(200).json({
       success: true,
       message: "Product created successfully",

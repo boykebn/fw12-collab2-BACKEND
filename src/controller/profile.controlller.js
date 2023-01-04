@@ -30,7 +30,6 @@ exports.updateProfile = async (req, res) => {
   try {
     if (req.file) {
       req.body.picture = req.file.path;
-      console.log(req.body.picture);
       await getUsersById(req.userData.id);
     }
     const updateUser = await updateUsers(req.body, req.userData.id);

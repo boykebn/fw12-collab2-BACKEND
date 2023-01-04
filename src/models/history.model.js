@@ -2,7 +2,9 @@ const db = require("../helper/db.helper");
 
 exports.readAllHistory = async () => {
   try {
-    const sql = `SELECT * FROM "history"`;
+    const sql = `SELECT p.*, o.status, o."totalPrice" FROM "product" p 
+    JOIN "orderedProduct" op ON op."productId" = p.id
+    JOIN "order" o ON o.id = op."orderId"`;
     const history = await db.query(sql);
     return history.rows;
   } catch (error) {

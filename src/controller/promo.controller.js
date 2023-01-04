@@ -8,7 +8,7 @@ const {
 } = require("../models/promo.model");
 const fs = require("fs");
 const fm = require("fs-extra");
-const cloudinary = require('../middleware/upload.middleware')
+const cloudinary = require("../middleware/upload.middleware");
 
 exports.getAllPromo = async (req, res) => {
   try {
@@ -51,24 +51,12 @@ exports.getPromoById = async (req, res) => {
     if (error) return errorHandler(error, res);
   }
 };
- 
+
 exports.updatePromo = async (req, res) => {
   try {
     if (req.file) {
+      await cloudinary?.uploader?.destroy(req.file.filename);
       req.body.picture = req.file.path;
-      const user = await getPromoById(req.params.id);
-      if (user.picture) {
-        fm.ensureFile("uploads/" + user.picture, (error) => {
-          if (error) {
-            return errorHandler(error, res);
-          }
-          fs.rm("uploads/" + user.picture, { force: true }, (error) => {
-            if (error) {
-              return errorHandler(error, res);
-            }
-          });
-        });
-      }
     }
     const Promo = await updatePromo(req.params.id, req.body);
     return res.status(200).json({

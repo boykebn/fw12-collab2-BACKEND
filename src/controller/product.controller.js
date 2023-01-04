@@ -10,6 +10,7 @@ const {
 const errorHandler = require("../helper/errorHandler.helper");
 const { productPrice } = require("../models/productSize.model");
 const {updateProductSizeAdmin} = require('../models/productSize.model')
+const cloudinary = require('../middleware/upload.middleware')
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -100,8 +101,11 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     if (req.file) {
-      req.body.picture = req.file.path;
-    }
+      if (req.file) {
+        await cloudinary?.uploader?.destroy(req.file.filename);
+        req.body.picture = req.file.path;
+      }
+      }
     const dataProduct = {
       name: req.body.name,
       description: req.body.description,

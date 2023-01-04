@@ -44,7 +44,7 @@ exports.updateProductSize = async (id, data) => {
 
 exports.deleteProductSize = async (id) => {
   try {
-    const sql = `DELETE FROM "productSize" WHERE id = $1 RETURNING *`;
+    const sql = `DELETE FROM "productSize" WHERE "productId" = $1 RETURNING *`;
     const newSize = await db.query(sql, [id]);
     return newSize.rows[0];
   } catch (error) {

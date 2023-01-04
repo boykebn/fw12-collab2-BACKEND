@@ -2,7 +2,8 @@ const { Pool } = require('pg')
 
 const db = new Pool({
     connectionString: 
-    process.env.DATABASE_URL 
+    process.env.DATABASE_URL, 
+    keepAlive:true
 })
 
 db.connect((err) =>{

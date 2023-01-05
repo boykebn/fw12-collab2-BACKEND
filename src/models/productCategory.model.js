@@ -35,7 +35,7 @@ exports.createProductCategory = async (data) => {
 exports.updateProductCategory = async (id, data) => {
   try {
     const sql = `UPDATE "productCategory" SET "productId"=COALESCE(NULLIF($1, '')::INTEGER, "productId"),
-    "categoryId"=COALESCE(NULLIF($1, '')::INTEGER, "categoryId"),"updatedAt"=$3 WHERE id = $4 RETURNING *`;
+    "categoryId"=COALESCE(NULLIF($1, '')::INTEGER, "categoryId"),"updatedAt"=$3 WHERE "id" = $4 RETURNING *`;
     const values = [data.productId, data.categoryId, new Date(), id];
     const productCategory = await db.query(sql, values);
     return productCategory.rows[0];
@@ -46,7 +46,7 @@ exports.updateProductCategory = async (id, data) => {
 
 exports.deleteProductCategory = async (id) => {
   try {
-    const sql = `DELETE FROM "productCategory" WHERE id = $1 RETURNING *`;
+    const sql = `DELETE FROM "productCategory" WHERE "productId" = $1 RETURNING *`;
     const values = [id];
     const productCategory = await db.query(sql, values);
     return productCategory.rows[0];

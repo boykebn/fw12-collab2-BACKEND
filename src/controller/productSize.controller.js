@@ -7,6 +7,7 @@ const {
   } = require("../models/productSize.model");
   const errorHandler = require("../helper/errorHandler.helper");
   
+  
   exports.getAllProductSize = async (req, res) => {
     try {
       const allProductSize = await getAllProductSize();

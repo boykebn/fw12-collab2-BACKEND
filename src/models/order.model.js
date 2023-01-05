@@ -113,7 +113,7 @@ exports.deleteOrder = async (id) => {
 
 exports.countOrderPaidByUserId = async (id) => {
   try {
-    const sql = `SELECT COUNT(*) AS "totalOrder" FROM "order" WHERE "order"."userId" = $1 AND "order"."status" = 'paid'`
+    const sql = `SELECT COUNT(*) AS "totalOrder" FROM "order" WHERE "order"."userId" = $1 AND "order"."status" = 'done'`
     const values = [id]
     return totalOrder = await db.query(sql, values)
   } catch (error) {

@@ -8,7 +8,7 @@ exports.getAllOrders = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "All Orders retrieved successfully",
-      results: Orders,
+      results: orders,
     });
   } catch (error) {
     if (error) return errorHandler(error, res);

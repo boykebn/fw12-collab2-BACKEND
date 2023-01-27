@@ -1,14 +1,25 @@
 const errorHandler = require("../helper/errorHandler.helper");
-const { createForgotPassword, readForgotPasswordByEmailAndCode, deleteForgotPassword } = require("../models/forgotPassword");
-const { selectUserByEmail, updateUsers, createUsers } = require("../models/users.model");
-
+const {
+  createForgotPassword,
+  readForgotPasswordByEmailAndCode,
+  deleteForgotPassword,
+} = require("../models/forgotPassword");
+const {
+  selectUserByEmail,
+  updateUsers,
+  createUsers,
+} = require("../models/users.model");
+const { mailOptions, transport } = require("../helper/mail.helper");
 const argon = require("argon2");
 const jwt = require("jsonwebtoken");
 
 const login = async (req, res) => {
   try {
     const user = await selectUserByEmail(req.body.email);
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY);
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.SECRET_KEY
+    );
     if (user.role == 1) {
       if (await argon.verify(user.password, req.body.password)) {
         return res.status(200).json({
@@ -54,7 +65,10 @@ const register = async (req, res) => {
   try {
     req.body.password = await argon.hash(req.body.password);
     const user = await createUsers(req.body);
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY);
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.SECRET_KEY
+    );
     return res.status(200).json({
       success: true,
       message: "Register Success",
@@ -71,12 +85,18 @@ const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await selectUserByEmail(email);
-    if(user) {
+    if (user) {
+      const code = String(Math.ceil(Math.random() * 90000 + 10000)).padEnd(
+        6,
+        "0"
+      );
       const data = {
         email,
         userId: user.id,
-        code: Math.ceil(Math.random() * 90000 + 10000),
+        code,
       };
+      const mailer = await transport();
+      await mailer.sendMail(mailOptions(email, code));
       const requstResetPassword = await createForgotPassword(data);
       return res.status(200).json({
         success: true,
@@ -97,24 +117,27 @@ const resetPassword = async (req, res) => {
   try {
     const { password, confirmPassword } = req.body;
     if (password === confirmPassword) {
-      const resetRequest = await readForgotPasswordByEmailAndCode(req.body)
-      if(resetRequest){
-        if(new Date(resetRequest.createdAt).getTime() + 15 * 60 * 1000 < new Date().getTime()){
-          throw Error('Code Expired')
-        } 
-        
-        const data = {
-          password : await argon.hash(password)
+      const resetRequest = await readForgotPasswordByEmailAndCode(req.body);
+      if (resetRequest) {
+        if (
+          new Date(resetRequest.createdAt).getTime() + 15 * 60 * 1000 <
+          new Date().getTime()
+        ) {
+          throw Error("Code Expired");
         }
 
-        const user = await updateUsers(data, resetRequest.userId)
-        const forgotPassword = await deleteForgotPassword(resetRequest.id)
+        const data = {
+          password: await argon.hash(password),
+        };
+
+        const user = await updateUsers(data, resetRequest.userId);
+        const forgotPassword = await deleteForgotPassword(resetRequest.id);
         return res.status(200).json({
           success: true,
           message: "Password success updated, please relogin",
         });
-      } else{
-        throw Error('Request not found')
+      } else {
+        throw Error("Request not found");
       }
     } else {
       return res.status(401).json({
@@ -131,5 +154,5 @@ module.exports = {
   login,
   register,
   forgotPassword,
-  resetPassword
+  resetPassword,
 };

@@ -60,11 +60,11 @@ exports.deleteProduct = async (id) => {
 
 exports.readProductByCategory = async (category) => {
   try {
-    const sql = `SELECT p.*, c.name as category, pz.price from product p 
+    const sql = `SELECT p.*, c."nameCategory" as category, pz.price from product p 
     LEFT JOIN "productCategory" pc ON p.id = pc."productId" 
     LEFT JOIN category c ON c.id = pc."categoryId"
     JOIN "productSize" pz ON p.id = pz."productId"
-    WHERE c.name = $1`
+    WHERE c."nameCategory" = $1`
     const values = [category]
     const products = await db.query(sql, values)
     return products.rows

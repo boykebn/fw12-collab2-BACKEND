@@ -3,6 +3,7 @@ const { getUsersById, updateUsers } = require("../models/users.model");
 const { countOrderPaidByUserId } = require("../models/order.model");
 const fs = require("fs");
 const fm = require("fs-extra");
+const {cloudinary} = require('../middleware/upload.middleware')
 
 exports.readProfile = async (req, res) => {
   try {
@@ -28,10 +29,24 @@ exports.readProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    if (req.file) {
-      req.body.picture = req.file.path;
-      await getUsersById(req.userData.id);
+    const user = await getUsersById(req.userData.id);
+    if (req?.file) {
+      if (!user.picture) {
+        user.picture = req.file.path;
+        req.body.picture = user.picture;
+      } else {
+        const setPicture = user?.picture?.split("/");
+        const getNumFormat = setPicture[setPicture.length - 1];
+        const getNumber = getNumFormat.split(".")[0];
+        const getDate = getNumber.split("_")[0];
+        const getRandomNum = getNumber.split("_")[1];
+        const idPicture = `${getDate}_${Number(getRandomNum)}`;
+        user.picture = req.file.path;
+        req.body.picture = user.picture;
+        await cloudinary.uploader.destroy(`OurCoffee/${idPicture}`);
+      }
     }
+
     const updateUser = await updateUsers(req.body, req.userData.id);
     return res.status(200).json({
       success: true,

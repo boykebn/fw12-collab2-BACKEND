@@ -4,21 +4,6 @@ const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const path = require("path");
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, callback) => {
-//     const dirPath = "uploads/";
-//     if (!fs.existsSync(dirPath)) {
-//       fs.mkdirSync(dirPath);
-//     }
-//     callback(null, dirPath);
-//   },
-//   filename: (req, file, callback) => {
-//     const getExtension = file.originalname.split(".");
-//     const extension = getExtension[getExtension.length - 1];
-//     const name = `${new Date().getDate()}_${new Date().getTime()}.${extension}`;
-//     callback(null, name);
-//   },
-// });
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,

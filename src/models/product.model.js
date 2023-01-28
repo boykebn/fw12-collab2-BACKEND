@@ -1,14 +1,29 @@
 const db = require("../helper/db.helper");
 
-exports.readAllProducts = async () => {
+exports.readAllProducts = async (filter) => {
   try {
-    const sql = `SELECT p.*, pz.price FROM product p JOIN "productSize" pz ON pz."productId" = p.id`;
-    const products = await db.query(sql);
+    const sql = `SELECT p.*, pz.price FROM product p JOIN "productSize" pz ON pz."productId" = p.id  LEFT JOIN "productCategory" pc ON p.id = pc."productId" 
+    LEFT JOIN category c ON c.id = pc."categoryId" WHERE name LIKE $1 AND pz."sizeId" = 2 AND c."nameCategory" LIKE $2  ORDER BY "${filter.sortBy}" ${filter.sort} LIMIT $3 OFFSET $4`;
+    const values = [`%${filter.search}%`, `%${filter.category}%`, filter.limit, filter.offset]
+    const products = await db.query(sql, values);
     return products.rows;
   } catch (error) {
     if(error) throw new Error(error);
   }
 };
+
+exports.countAllProduct = async (filter) => {
+  try{
+    const sql = `SELECT COUNT(*) AS "totalData" FROM product p JOIN "productSize" pz ON pz."productId" = p.id LEFT JOIN "productCategory" pc ON p.id = pc."productId" 
+    LEFT JOIN category c ON c.id = pc."categoryId" WHERE name LIKE $1 AND pz."sizeId" = 2 AND c."nameCategory" LIKE $2`;
+    const values = [`%${filter.search}%`, `%${filter.category}%`];
+    const products = await db.query(sql, values);
+    return products.rows[0].totalData
+  } catch (error){
+    if(error) throw new Error(error)
+  }
+};
+
 
 exports.readProduct = async (id) => {
   try {

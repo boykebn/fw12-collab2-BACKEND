@@ -5,21 +5,31 @@ const {
   updateProductAdmin,
   deleteProduct,
   readProductByCategory,
-  readProductByIdAndSize
+  readProductByIdAndSize,
+  countAllProduct
 } = require("../models/product.model");
 const {createDeliveryTime} = require("../models/deliveryTime.model")
 const errorHandler = require("../helper/errorHandler.helper");
 const { productPrice } = require("../models/productSize.model");
 const {updateProductSizeAdmin} = require('../models/productSize.model')
 const cloudinary = require('../middleware/upload.middleware')
+const filter = require('../helper/filter.helper.js')
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const products = await readAllProducts();
+    const sortable = [
+      "name",
+      "description",
+      "createdAt",
+      "updatedAt",
+    ];
+    const filtering = await filter(req.query, sortable, countAllProduct)
+    const products = await readAllProducts(filtering.params);
     res.status(200).json({
       success: true,
       message: "All products retrieved successfully",
       results: products,
+      pageInfo: filtering.pageInfo
     });
   } catch (error) {
     if (error) return errorHandler(error, res);

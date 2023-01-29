@@ -12,51 +12,12 @@ exports.readAllHistory = async () => {
   }
 };
 
-exports.readHistory = async (id) => {
+exports.readHistoryByUserId = async (id) => {
   try {
-    const sql = `SELECT * FROM "history" WHERE id = $1`;
+    const sql = `SELECT o.*, p.name, p.picture FROM "order" o JOIN "orderedProduct" op ON o.id = op."orderId" JOIN "product" p ON op."productId" = p.id WHERE o."userId" = $1 AND o.status = 'done'`;
     const values = [id];
     const history = await db.query(sql, values);
-    return history.rows[0];
-  } catch (error) {
-    if (error) throw new Error(error);
-  }
-};
-
-exports.createHistory = async (data) => {
-  try {
-    const sql = `INSERT INTO "history" ("userId", "orderId") VALUES ($1, $2) RETURNING *`;
-    const values = [data.userId, data.orderId];
-    const history = await db.query(sql, values);
-    return history.rows[0];
-  } catch (error) {
-    if (error) throw new Error(error);
-  }
-};
-
-exports.updateHistory = async (id, data) => {
-  try {
-    const sql = `UPDATE "history" SET "userId"=COALESCE(NULLIF($1, '')::BIGINT, "userId"),
-    "orderId"=COALESCE(NULLIF($2, '')::BIGINT, "orderId"), "updatedAt"=$3 WHERE id = $4 RETURNING *`;
-    const values = [
-      data.userId,
-      data.orderId,
-      new Date(),
-      id,
-    ];
-    const history = await db.query(sql, values);
-    return history.rows[0];
-  } catch (error) {
-    if (error) throw new Error(error);
-  }
-};
-
-exports.deleteHistory = async (id) => {
-  try {
-    const sql = `DELETE FROM "history" WHERE id = $1 RETURNING *`;
-    const values = [id];
-    const history = await db.query(sql, values);
-    return history.rows[0];
+    return history.rows
   } catch (error) {
     if (error) throw new Error(error);
   }

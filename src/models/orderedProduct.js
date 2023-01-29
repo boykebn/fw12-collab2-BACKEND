@@ -24,9 +24,9 @@ exports.createOrderedProduct = async (data) => {
 
 exports.readOrderedProduct = async (id) => {
   try {
-    const sql = `SELECT * FROM "orderedProduct" WHERE id = $1`;
+    const sql = `SELECT * FROM "orderedProduct" op JOIN "product" p ON op."productId" = p.id  WHERE op."orderid" = $1`;
     const newOrderedProduct = await db.query(sql, [id]);
-    return newOrderedProduct.rows[0];
+    return newOrderedProduct.rows
   } catch (error) {
     if (error) throw error;
   }
@@ -46,7 +46,7 @@ exports.updateOrderedProduct = async (id, data) => {
 
 exports.deleteOrderedProduct = async (id) => {
   try {
-    const sql = `DELETE FROM "orderedProduct" WHERE id = $1 RETURNING *`;
+    const sql = `DELETE FROM "orderedProduct" WHERE "orderId" = $1 RETURNING *`;
     const newOrderedProduct = await db.query(sql, [id]);
     return newOrderedProduct.rows[0];
   } catch (error) {

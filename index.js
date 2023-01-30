@@ -16,6 +16,13 @@ app.use('/uploads', express.static("uploads/"))
 
 app.use("/", require("./src/routes"));
 
+app.get("/", (request, response) => {
+  return response.status(200).json({
+    success: true,
+    message: "Backend is running well",
+  });
+});
+
 app.listen(port, () => {
   console.log(`app listening on port ${port}`);
   console.log(`http://localhost:${port}/`)

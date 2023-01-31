@@ -14,7 +14,10 @@ exports.readAllHistory = async () => {
 
 exports.readHistoryByUserId = async (id) => {
   try {
-    const sql = `SELECT o.*, p.name, p.picture FROM "order" o JOIN "orderedProduct" op ON o.id = op."orderId" JOIN "product" p ON op."productId" = p.id WHERE o."userId" = $1 AND o.status = 'done'`;
+    const sql = `SELECT o.*, p.name, p.picture FROM "order" o 
+    JOIN "orderedProduct" op ON o.id = op."orderId" 
+    JOIN "product" p ON op."productId" = p.id 
+    WHERE o."userId" = $1 AND o.status = 'done'`;
     const values = [id];
     const history = await db.query(sql, values);
     return history.rows
